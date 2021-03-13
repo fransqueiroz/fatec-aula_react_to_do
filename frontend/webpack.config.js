@@ -8,7 +8,7 @@ module.exports = {
         filename: './app.js'
     },
     devServer: {
-        port: 8080,
+        port: 8081,
         contentBase: './public',
     },
     resolve: {
@@ -17,7 +17,7 @@ module.exports = {
             modules: __dirname + '/node_modules'
         }
     },
-    plugins: [ 
+    plugins: [
         new ExtractTextPlugin('app.css')
     ],
     module: {
