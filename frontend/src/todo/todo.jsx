@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import axios from 'axios'
-
 import PageHeader from '../template/pageHeader'
 import TodoForm from './todoForm'
 import TodoList from './todoList'
@@ -13,23 +12,22 @@ export default class Todo extends Component {
         this.state = { description: '', list: [] }
         this.handleAdd = this.handleAdd.bind(this)
         this.handleChange = this.handleChange.bind(this)
-        this.refresh()
         this.handleRemove = this.handleRemove.bind(this)
-    }
-
-    refresh(){
-        axios.get(`${URL}?sort=-createdAt`)
-            .then(resp => this.setState({ ...this.state, description: '', list: resp.data}))
+        this.handleMarkAsDone = this.handleMarkAsDone.bind(this)
+        this.handleMarkAsPending = this.handleMarkAsPending.bind(this)
+        this.handleSearch = this.handleSearch.bind(this)
+        this.handleClear = this.handleClear.bind(this)
+        this.refresh()
     }
 
     handleAdd() {
-        const description = this.state.description;
+        const description = this.state.description
         axios.post(URL, {description})
-            .then(this.refresh())
+            .then(resp => this.refresh())
     }
 
-    handleChange(e) {
-        this.setState({...this.state, description: e.target.value})
+    handleChange(event) {
+        this.setState({...this.state, description: event.target.value})
     }
 
     handleRemove(todo) {
@@ -37,18 +35,55 @@ export default class Todo extends Component {
             .then(resp => this.refresh())
     }
 
+    handleMarkAsDone(todo) {
+        axios.put(`${URL}/${todo._id}`, {...todo, done: true})
+            .then(resp => this.refresh())
+    }
+
+    handleMarkAsPending(todo) {
+        axios.put(`${URL}/${todo._id}`, {...todo, done: false})
+            .then(resp => this.refresh())
+    }
+
+    handleSearch(){
+        this.refresh(this.state.description)
+    }
+
+    handleClear(){
+        this.refresh()
+    }
+
+    refresh(description = '') {
+        const search = description ? `&description__regex=/${description}/` : ''
+        axios.get(`${URL}?sort=-createdAt${search}`)
+            .then(resp => 
+                this.setState(
+                    {
+                        ...this.state, 
+                        description,
+                        list: resp.data
+                    }
+                )
+            )
+    }
+
     render() {
         return (
             <div>
                 <PageHeader name="Tarefas" small="Cadastro"/>
-                <TodoForm
+                <TodoForm  
                     handleAdd={this.handleAdd}
                     handleChange={this.handleChange}
                     description={this.state.description}
+                    handleSearch={this.handleSearch}
+                    handleClear={this.handleClear}
                     />
                 <TodoList
                     list={this.state.list}
-                    handleRemove={this.handleRemove}/>
+                    handleRemove={this.handleRemove}
+                    handleMarkAsDone={this.handleMarkAsDone}
+                    handleMarkAsPending={this.handleMarkAsPending}
+                />
             </div>
         )
     }

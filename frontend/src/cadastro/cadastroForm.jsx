@@ -13,14 +13,14 @@ export default props => {
     }
 
     return (
-        <div role="form" className="todoForm">
+        <div role="form" className="cadastroForm">
             <div className="col-xs-12 col-sm-9 col-md-10">
                 <input
-                    id="description"
+                    id="nome"
                     className="form-control"
-                    placeholder="Adicione uma tarefa"
+                    placeholder="Nome"
                     onChange={props.handleChange}
-                    value={props.description}
+                    value={props.nome}
                     onKeyUp={keyHandler}
                 ></input>
             </div>
